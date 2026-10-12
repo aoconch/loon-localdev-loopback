@@ -1,0 +1,25 @@
+#!name = 本机回环 (LocalDevVPN 替代)
+#!desc = 让 10.7.0.1 反射回本机，供 StikDebug / SideStore 等只认非回环地址的 iOS 工具链使用
+#!author = o
+#!date = 2026-10-12
+#!loon_version = 3.5.3(1007)
+#!tag = 开发工具,调试
+#!type = normal
+
+# 需要 Loon Build 1007 及以上；IP Rewrite 只能在插件里声明，主配置不支持该模块。
+# 修改 include-tun 的网段或 IP Rewrite 的动作后，需要断开并重连 Loon 让路由重新下发。
+
+[General]
+
+# 部分工具链只认没有 IPv6 地址的 utun 接口（任一启用插件声明 off 即全局生效）
+ipv6-vif = off
+
+# 与 bypass-tun 相反：强制该 IPv4 网段进入 Loon 的 TUN
+include-tun = 10.7.0.1/32
+
+[IP Rewrite]
+
+# reflect：交换源 / 目的 IP 并回注本机协议栈，端口与载荷保持原样
+# reject：TCP 回 RST，其他协议回 ICMP 管理性禁止
+# drop：静默丢弃
+10.7.0.1 = reflect
